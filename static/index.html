@@ -13,586 +13,238 @@
       --text: #e8e8f0;
       --muted: #8888a8;
       --accent: #7c6dfa;
-      --accent-glow: rgba(124, 109, 250, 0.25);
-      --verified: #22c55e;
-      --incorrect: #ef4444;
-      --misleading: #f59e0b;
-      --unverified: #6b7280;
-      --verified-bg: rgba(34,197,94,0.1);
-      --incorrect-bg: rgba(239,68,68,0.1);
-      --misleading-bg: rgba(245,158,11,0.1);
-      --unverified-bg: rgba(107,114,128,0.1);
+      --accent-glow: rgba(124,109,250,0.2);
+      --verified:   #22c55e; --verified-bg:   rgba(34,197,94,0.1);
+      --incorrect:  #ef4444; --incorrect-bg:  rgba(239,68,68,0.1);
+      --misleading: #f59e0b; --misleading-bg: rgba(245,158,11,0.1);
+      --unverified: #6b7280; --unverified-bg: rgba(107,114,128,0.1);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    /* ── Header ── */
-    header {
-      border-bottom: 1px solid var(--border);
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .logo-icon {
-      width: 34px; height: 34px;
-      background: var(--accent);
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 17px; flex-shrink: 0;
-    }
-    .logo-text { font-size: 19px; font-weight: 700; letter-spacing: -0.3px; }
-    .logo-text span { color: var(--accent); }
-    .header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-    .badge {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 11px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .btn-keys {
-      display: flex; align-items: center; gap: 6px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      padding: 7px 13px;
-      font-size: 13px;
-      color: var(--text);
-      cursor: pointer;
-      transition: border-color 0.2s;
-    }
-    .btn-keys:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-keys.keys-set { border-color: var(--verified); color: var(--verified); }
+    /* Header */
+    header { border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:12px; }
+    .logo-icon { width:34px;height:34px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0; }
+    .logo-text { font-size:19px;font-weight:700;letter-spacing:-0.3px; }
+    .logo-text span { color:var(--accent); }
+    .header-right { margin-left:auto;display:flex;align-items:center;gap:10px; }
+    .badge { background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--muted); }
+    .btn-keys { display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;transition:border-color .2s; }
+    .btn-keys:hover { border-color:var(--accent); }
+    .keys-dot { width:7px;height:7px;border-radius:50%;background:var(--unverified); }
+    .keys-dot.set { background:var(--verified); }
 
-    /* ── Keys modal ── */
-    .modal-overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(4px);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      width: 100%;
-      max-width: 480px;
-      padding: 28px;
-    }
-    .modal-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .modal-title { font-size: 18px; font-weight: 700; }
-    .modal-close {
-      background: none; border: none; color: var(--muted);
-      font-size: 22px; cursor: pointer; line-height: 1;
-      padding: 2px 6px; border-radius: 6px;
-    }
-    .modal-close:hover { background: var(--surface2); color: var(--text); }
-    .modal-desc {
-      font-size: 13px; color: var(--muted); line-height: 1.5;
-      margin-bottom: 22px;
-    }
-    .modal-desc a { color: var(--accent); text-decoration: none; }
-    .modal-desc a:hover { text-decoration: underline; }
+    /* Keys modal */
+    .modal-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center;padding:20px; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px;width:100%;max-width:480px; }
+    .modal h2 { font-size:18px;font-weight:700;margin-bottom:6px; }
+    .modal p { font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.5; }
+    .key-field { margin-bottom:14px; }
+    .key-field label { display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px; }
+    .key-field input { width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--text);font-family:monospace;outline:none;transition:border-color .2s; }
+    .key-field input:focus { border-color:var(--accent); }
+    .key-field input::placeholder { color:var(--muted); }
+    .modal-hint { font-size:12px;color:var(--muted);margin-top:4px; }
+    .modal-hint a { color:var(--accent);text-decoration:none; }
+    .modal-actions { display:flex;gap:10px;margin-top:22px; }
+    .btn-save { flex:1;background:var(--accent);color:#fff;border:none;border-radius:9px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s; }
+    .btn-save:hover { opacity:.9; }
+    .btn-cancel { background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:9px;padding:11px 18px;font-size:14px;cursor:pointer; }
 
-    .key-field { margin-bottom: 16px; }
-    .key-label {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 13px; font-weight: 600; margin-bottom: 7px;
-    }
-    .key-label a {
-      font-size: 12px; font-weight: 400;
-      color: var(--accent); text-decoration: none;
-    }
-    .key-label a:hover { text-decoration: underline; }
-    .key-input-wrap { position: relative; }
-    .key-input {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      padding: 10px 40px 10px 13px;
-      font-size: 13px;
-      color: var(--text);
-      outline: none;
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      transition: border-color 0.2s;
-    }
-    .key-input:focus { border-color: var(--accent); }
-    .key-input.valid { border-color: var(--verified); }
-    .key-toggle {
-      position: absolute; right: 10px; top: 50%;
-      transform: translateY(-50%);
-      background: none; border: none;
-      color: var(--muted); cursor: pointer; font-size: 14px;
-      padding: 2px 4px;
-    }
-    .key-toggle:hover { color: var(--text); }
-    .key-hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+    /* Hero */
+    .hero { text-align:center;padding:60px 24px 40px;max-width:660px;margin:0 auto; }
+    .hero-tag { display:inline-block;background:var(--accent-glow);border:1px solid rgba(124,109,250,.35);color:#a89ffe;border-radius:20px;padding:5px 14px;font-size:13px;margin-bottom:18px; }
+    .hero h1 { font-size:clamp(26px,5vw,42px);font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:14px; }
+    .hero h1 span { color:var(--accent); }
+    .hero p { font-size:16px;color:var(--muted);line-height:1.6; }
 
-    .keys-divider { height: 1px; background: var(--border); margin: 20px 0; }
+    /* Keys warning */
+    #keys-warning { display:none;max-width:600px;margin:18px auto 0;padding:0 24px; }
+    .warn-card { background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:14px 18px;display:flex;gap:10px;align-items:center;font-size:13px;color:#fbbf24; }
+    .warn-card button { margin-left:auto;background:transparent;border:1px solid #fbbf24;color:#fbbf24;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;white-space:nowrap; }
 
-    .btn-save-keys {
-      width: 100%;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    .btn-save-keys:hover { opacity: 0.9; }
-    .save-status {
-      text-align: center;
-      font-size: 13px;
-      color: var(--verified);
-      margin-top: 10px;
-      height: 18px;
-    }
+    /* Search */
+    .search-wrap { max-width:620px;margin:28px auto 0;padding:0 24px; }
+    .search-box { display:flex;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:6px 6px 6px 16px;transition:border-color .2s; }
+    .search-box:focus-within { border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow); }
+    .search-box input { flex:1;background:transparent;border:none;outline:none;font-size:15px;color:var(--text); }
+    .search-box input::placeholder { color:var(--muted); }
+    .btn-analyze { background:var(--accent);color:#fff;border:none;border-radius:9px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .2s,transform .1s; }
+    .btn-analyze:hover { opacity:.9;transform:translateY(-1px); }
+    .btn-analyze:disabled { opacity:.5;cursor:not-allowed;transform:none; }
+    .supported { text-align:center;margin-top:10px;font-size:12px;color:var(--muted); }
 
-    /* ── Hero ── */
-    .hero {
-      text-align: center;
-      padding: 60px 24px 36px;
-      max-width: 680px;
-      margin: 0 auto;
-    }
-    .hero-tag {
-      display: inline-block;
-      background: var(--accent-glow);
-      border: 1px solid rgba(124,109,250,0.4);
-      color: #a89ffe;
-      border-radius: 20px;
-      padding: 5px 14px;
-      font-size: 13px;
-      margin-bottom: 18px;
-    }
-    .hero h1 {
-      font-size: clamp(26px, 5vw, 42px);
-      font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: -1px;
-      margin-bottom: 14px;
-    }
-    .hero h1 span { color: var(--accent); }
-    .hero p { font-size: 16px; color: var(--muted); line-height: 1.6; }
+    /* Loading */
+    #loading { display:none;max-width:600px;margin:36px auto;padding:0 24px; }
+    .loading-card { background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:30px;text-align:center; }
+    .spinner { width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 18px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .loading-steps { list-style:none;text-align:left;margin-top:18px; }
+    .loading-steps li { display:flex;align-items:center;gap:10px;padding:7px 0;font-size:14px;color:var(--muted);border-bottom:1px solid var(--border); }
+    .loading-steps li:last-child { border-bottom:none; }
+    .step-dot { width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .3s; }
+    .step-dot.active { background:var(--accent);box-shadow:0 0 6px var(--accent); }
+    .step-dot.done { background:var(--verified); }
 
-    /* Keys required banner */
-    .keys-banner {
-      display: none;
-      max-width: 640px;
-      margin: 0 auto 20px;
-      padding: 0 24px;
-    }
-    .keys-banner.visible { display: block; }
-    .keys-banner-inner {
-      background: rgba(124,109,250,0.1);
-      border: 1px solid rgba(124,109,250,0.3);
-      border-radius: 12px;
-      padding: 14px 18px;
-      display: flex; align-items: center; gap: 12px;
-      font-size: 14px; cursor: pointer;
-      transition: border-color 0.2s;
-    }
-    .keys-banner-inner:hover { border-color: var(--accent); }
-    .keys-banner-inner span { color: var(--muted); }
-    .keys-banner-inner strong { color: var(--accent); }
+    /* Error */
+    #error { display:none;max-width:600px;margin:28px auto;padding:0 24px; }
+    .error-card { background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:13px;padding:18px 22px;display:flex;gap:12px; }
+    .error-msg { font-size:14px;line-height:1.5; }
+    .error-msg strong { color:var(--incorrect); }
 
-    /* ── Search box ── */
-    .search-wrap {
-      max-width: 640px;
-      margin: 28px auto 0;
-      padding: 0 24px;
-    }
-    .search-box {
-      display: flex;
-      gap: 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 6px 6px 6px 16px;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .search-box:focus-within {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-    .search-box input {
-      flex: 1;
-      background: transparent;
-      border: none; outline: none;
-      font-size: 15px; color: var(--text);
-      padding: 8px 0;
-    }
-    .search-box input::placeholder { color: var(--muted); }
-    .btn-analyze {
-      background: var(--accent);
-      color: #fff; border: none;
-      border-radius: 10px;
-      padding: 10px 22px;
-      font-size: 15px; font-weight: 600;
-      cursor: pointer; white-space: nowrap;
-      transition: opacity 0.2s, transform 0.1s;
-    }
-    .btn-analyze:hover { opacity: 0.9; transform: translateY(-1px); }
-    .btn-analyze:active { transform: translateY(0); }
-    .btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .supported {
-      text-align: center; margin-top: 10px;
-      font-size: 13px; color: var(--muted);
-    }
+    /* Results */
+    #results { display:none;max-width:820px;margin:0 auto;padding:36px 24px 80px; }
 
-    /* ── Loading ── */
-    #loading {
-      display: none;
-      max-width: 640px;
-      margin: 36px auto;
-      padding: 0 24px;
-    }
-    .loading-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
-      text-align: center;
-    }
-    .spinner {
-      width: 44px; height: 44px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 18px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-steps { list-style: none; text-align: left; margin-top: 18px; }
-    .loading-steps li {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 0; font-size: 14px; color: var(--muted);
-      border-bottom: 1px solid var(--border);
-    }
-    .loading-steps li:last-child { border-bottom: none; }
-    .step-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--border); flex-shrink: 0;
-      transition: background 0.3s;
-    }
-    .step-dot.active { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
-    .step-dot.done  { background: var(--verified); }
+    .overall-banner { border-radius:16px;padding:22px 26px;margin-bottom:28px;border:1px solid;display:flex;align-items:flex-start;gap:16px; }
+    .overall-banner.true       { background:var(--verified-bg);  border-color:var(--verified);  }
+    .overall-banner.false      { background:var(--incorrect-bg); border-color:var(--incorrect); }
+    .overall-banner.misleading { background:var(--misleading-bg);border-color:var(--misleading);}
+    .overall-banner.unverified { background:var(--unverified-bg);border-color:var(--unverified);}
+    .overall-icon   { font-size:28px;flex-shrink:0;line-height:1; }
+    .overall-label  { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;opacity:.7; }
+    .overall-title  { font-size:18px;font-weight:700;margin-bottom:6px; }
+    .overall-summary{ font-size:14px;line-height:1.6;opacity:.85; }
 
-    /* ── Error ── */
-    #error {
-      display: none;
-      max-width: 640px;
-      margin: 28px auto;
-      padding: 0 24px;
-    }
-    .error-card {
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.3);
-      border-radius: 14px;
-      padding: 18px 22px;
-      display: flex; gap: 12px; align-items: flex-start;
-    }
-    .error-icon { font-size: 20px; flex-shrink: 0; }
-    .error-msg { font-size: 14px; line-height: 1.5; }
-    .error-msg strong { color: var(--incorrect); }
+    .results-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap; }
+    .results-title { font-size:18px;font-weight:700; }
+    .summary-pills { display:flex;gap:7px;flex-wrap:wrap; }
+    .pill { border-radius:20px;padding:4px 11px;font-size:12px;font-weight:600;border:1px solid; }
+    .pill.verified   { color:var(--verified);  border-color:var(--verified);  background:var(--verified-bg);  }
+    .pill.incorrect  { color:var(--incorrect); border-color:var(--incorrect); background:var(--incorrect-bg); }
+    .pill.misleading { color:var(--misleading);border-color:var(--misleading);background:var(--misleading-bg);}
+    .pill.unverified { color:var(--unverified);border-color:var(--unverified);background:var(--unverified-bg);}
 
-    /* ── Results ── */
-    #results {
-      display: none;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 36px 24px 80px;
-    }
-    .results-header {
-      display: flex; align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px; gap: 12px; flex-wrap: wrap;
-    }
-    .results-title { font-size: 21px; font-weight: 700; }
-    .summary-pills { display: flex; gap: 8px; flex-wrap: wrap; }
-    .pill {
-      border-radius: 20px; padding: 4px 12px;
-      font-size: 13px; font-weight: 600; border: 1px solid;
-    }
-    .pill.verified   { color: var(--verified);   border-color: var(--verified);   background: var(--verified-bg);   }
-    .pill.incorrect  { color: var(--incorrect);  border-color: var(--incorrect);  background: var(--incorrect-bg);  }
-    .pill.misleading { color: var(--misleading); border-color: var(--misleading); background: var(--misleading-bg); }
-    .pill.unverified { color: var(--unverified); border-color: var(--unverified); background: var(--unverified-bg); }
+    .transcript-section { margin-bottom:28px; }
+    .section-label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px; }
+    .transcript-box { background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px 18px;font-size:13px;line-height:1.7;color:var(--muted);max-height:100px;overflow:hidden;position:relative;cursor:pointer; }
+    .transcript-box.expanded { max-height:500px; }
+    .transcript-fade { position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(transparent,var(--surface));pointer-events:none; }
+    .transcript-box.expanded .transcript-fade { display:none; }
+    .transcript-hint { font-size:12px;color:var(--accent);margin-top:5px;cursor:pointer; }
 
-    .transcript-section { margin-bottom: 28px; }
-    .section-label {
-      font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1px; color: var(--muted); margin-bottom: 9px;
-    }
-    .transcript-box {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 14px 18px;
-      font-size: 14px; line-height: 1.7; color: var(--muted);
-      max-height: 110px; overflow: hidden;
-      position: relative; cursor: pointer; transition: max-height 0.3s;
-    }
-    .transcript-box.expanded { max-height: 600px; }
-    .transcript-fade {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      height: 44px;
-      background: linear-gradient(transparent, var(--surface));
-      pointer-events: none; transition: opacity 0.3s;
-    }
-    .transcript-box.expanded .transcript-fade { opacity: 0; }
-    .transcript-hint {
-      font-size: 12px; color: var(--accent);
-      margin-top: 5px; cursor: pointer;
-    }
+    .claims-section-label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px; }
+    .sort-tag { background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:10px;color:var(--muted);font-weight:400;letter-spacing:0; }
+    .claims-grid { display:flex;flex-direction:column;gap:14px; }
 
-    /* ── Overall verdict card ── */
-    .overall-card {
-      border-radius: 16px;
-      padding: 22px 24px;
-      margin-bottom: 28px;
-      border: 1px solid;
-      display: flex;
-      align-items: flex-start;
-      gap: 18px;
-    }
-    .overall-card.true       { background: rgba(34,197,94,0.08);  border-color: rgba(34,197,94,0.35);  }
-    .overall-card.false      { background: rgba(239,68,68,0.08);  border-color: rgba(239,68,68,0.35);  }
-    .overall-card.misleading { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.35); }
-    .overall-card.unverified { background: rgba(107,114,128,0.08);border-color: rgba(107,114,128,0.35);}
-    .overall-icon { font-size: 36px; flex-shrink: 0; line-height: 1; }
-    .overall-body { flex: 1; }
-    .overall-label {
-      font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1px; color: var(--muted); margin-bottom: 4px;
-    }
-    .overall-verdict-text {
-      font-size: 22px; font-weight: 800; margin-bottom: 6px;
-    }
-    .overall-card.true       .overall-verdict-text { color: var(--verified);   }
-    .overall-card.false      .overall-verdict-text { color: var(--incorrect);  }
-    .overall-card.misleading .overall-verdict-text { color: var(--misleading); }
-    .overall-card.unverified .overall-verdict-text { color: var(--unverified); }
-    .overall-summary { font-size: 14px; line-height: 1.6; color: var(--muted); }
+    .claim-card { background:var(--surface);border:1px solid var(--border);border-radius:15px;overflow:hidden;transition:border-color .2s; }
+    .claim-card:hover { border-color:rgba(124,109,250,.4); }
+    .claim-card.verified   { border-left:3px solid var(--verified);  }
+    .claim-card.incorrect  { border-left:3px solid var(--incorrect); }
+    .claim-card.misleading { border-left:3px solid var(--misleading);}
+    .claim-card.unverified { border-left:3px solid var(--unverified);}
 
-    /* ── Subsection labels ── */
-    .sub-label {
-      font-size: 12px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1px; color: var(--muted);
-      margin: 22px 0 10px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .sub-label::after {
-      content: ''; flex: 1; height: 1px; background: var(--border);
-    }
+    .claim-header { display:flex;align-items:flex-start;gap:12px;padding:18px 18px 0; }
+    .verdict-badge { flex-shrink:0;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border:1px solid; }
+    .verdict-badge.verified   { background:var(--verified-bg);  color:var(--verified);  border-color:var(--verified);  }
+    .verdict-badge.incorrect  { background:var(--incorrect-bg); color:var(--incorrect); border-color:var(--incorrect); }
+    .verdict-badge.misleading { background:var(--misleading-bg);color:var(--misleading);border-color:var(--misleading);}
+    .verdict-badge.unverified { background:var(--unverified-bg);color:var(--unverified);border-color:var(--unverified);}
+    .claim-text { font-size:15px;font-weight:600;line-height:1.4;flex:1; }
+    .core-tag { font-size:10px;background:var(--accent-glow);color:var(--accent);border:1px solid rgba(124,109,250,.3);border-radius:4px;padding:2px 7px;white-space:nowrap;flex-shrink:0; }
 
-    .claims-grid { display: flex; flex-direction: column; gap: 14px; }
-    .claim-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; overflow: hidden; transition: border-color 0.2s;
-    }
-    .claim-card:hover { border-color: rgba(124,109,250,0.5); }
-    .claim-card.verified   { border-left: 3px solid var(--verified);   }
-    .claim-card.incorrect  { border-left: 3px solid var(--incorrect);  }
-    .claim-card.misleading { border-left: 3px solid var(--misleading); }
-    .claim-card.unverified { border-left: 3px solid var(--unverified); }
+    .claim-body { padding:12px 18px 18px; }
+    .claim-explanation { font-size:13px;line-height:1.6;color:var(--muted);margin-bottom:12px; }
+    .confidence-row { display:flex;align-items:center;gap:8px;margin-bottom:14px; }
+    .confidence-label { font-size:11px;color:var(--muted); }
+    .confidence-bar { flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden; }
+    .confidence-fill { height:100%;border-radius:2px; }
+    .conf-high   .confidence-fill { width:90%;background:var(--verified);  }
+    .conf-medium .confidence-fill { width:55%;background:var(--misleading); }
+    .conf-low    .confidence-fill { width:25%;background:var(--unverified); }
+    .confidence-val { font-size:11px;color:var(--muted);min-width:40px;text-align:right; }
+    .sources-title { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:7px; }
+    .sources-list { display:flex;flex-direction:column;gap:5px; }
+    .source-item { display:flex;align-items:flex-start;gap:7px;font-size:12px; }
+    .source-dot { width:4px;height:4px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:5px; }
+    .source-link { color:#a89ffe;text-decoration:none;line-height:1.4; }
+    .source-link:hover { text-decoration:underline; }
+    .source-relevance { font-size:11px;color:var(--muted);margin-top:1px; }
 
-    .claim-header {
-      display: flex; align-items: flex-start;
-      gap: 12px; padding: 18px 18px 0;
-    }
-    .verdict-badge {
-      flex-shrink: 0; border-radius: 7px;
-      padding: 4px 10px; font-size: 11px;
-      font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.5px; border: 1px solid;
-    }
-    .verdict-badge.verified   { background: var(--verified-bg);   color: var(--verified);   border-color: var(--verified);   }
-    .verdict-badge.incorrect  { background: var(--incorrect-bg);  color: var(--incorrect);  border-color: var(--incorrect);  }
-    .verdict-badge.misleading { background: var(--misleading-bg); color: var(--misleading); border-color: var(--misleading); }
-    .verdict-badge.unverified { background: var(--unverified-bg); color: var(--unverified); border-color: var(--unverified); }
-
-    .claim-text { font-size: 15px; font-weight: 600; line-height: 1.4; flex: 1; }
-    .claim-body { padding: 12px 18px 18px; }
-    .claim-explanation {
-      font-size: 14px; line-height: 1.6;
-      color: var(--muted); margin-bottom: 12px;
-    }
-    .confidence-row {
-      display: flex; align-items: center;
-      gap: 8px; margin-bottom: 14px;
-    }
-    .confidence-label { font-size: 12px; color: var(--muted); }
-    .confidence-bar {
-      flex: 1; height: 4px; background: var(--border);
-      border-radius: 2px; overflow: hidden;
-    }
-    .confidence-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
-    .conf-high   .confidence-fill { width: 90%; background: var(--verified);   }
-    .conf-medium .confidence-fill { width: 55%; background: var(--misleading); }
-    .conf-low    .confidence-fill { width: 25%; background: var(--unverified); }
-    .confidence-val { font-size: 12px; color: var(--muted); min-width: 44px; text-align: right; }
-
-    .sources-title {
-      font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.8px; color: var(--muted); margin-bottom: 7px;
-    }
-    .sources-list { display: flex; flex-direction: column; gap: 5px; }
-    .source-item { display: flex; align-items: flex-start; gap: 7px; font-size: 13px; }
-    .source-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--accent); flex-shrink: 0; margin-top: 6px;
-    }
-    .source-link { color: #a89ffe; text-decoration: none; line-height: 1.4; }
-    .source-link:hover { text-decoration: underline; }
-    .source-relevance { font-size: 12px; color: var(--muted); margin-top: 1px; }
-
-    /* ── Footer ── */
-    footer {
-      text-align: center; padding: 28px 24px;
-      color: var(--muted); font-size: 13px;
-      border-top: 1px solid var(--border);
-    }
-    footer a { color: var(--accent); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
+    footer { text-align:center;padding:28px 24px;color:var(--muted);font-size:12px;border-top:1px solid var(--border); }
+    footer a { color:var(--accent);text-decoration:none; }
   </style>
 </head>
 <body>
 
-<!-- ── Keys Modal ── -->
-<div class="modal-overlay" id="keys-modal" onclick="handleOverlayClick(event)">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">🔑 API Keys</div>
-      <button class="modal-close" onclick="closeKeysModal()">×</button>
-    </div>
-    <p class="modal-desc">
-      Your keys are saved in your browser only — never sent to any server except the respective API provider.
-      Need keys? <a href="https://console.anthropic.com/" target="_blank">Anthropic</a> ·
-      <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI</a> ·
-      <a href="https://app.tavily.com/" target="_blank">Tavily</a>
-    </p>
-
-    <div class="key-field">
-      <div class="key-label">
-        Anthropic API Key
-        <a href="https://console.anthropic.com/" target="_blank">Get key →</a>
-      </div>
-      <div class="key-input-wrap">
-        <input class="key-input" id="key-anthropic" type="password"
-               placeholder="sk-ant-..." autocomplete="off" oninput="validateKey(this, 'sk-ant')" />
-        <button class="key-toggle" onclick="toggleVis('key-anthropic', this)">👁</button>
-      </div>
-      <div class="key-hint">Used for claim extraction and fact-checking · ~$0.05–0.10 per video</div>
-    </div>
-
-    <div class="key-field">
-      <div class="key-label">
-        OpenAI API Key
-        <a href="https://platform.openai.com/api-keys" target="_blank">Get key →</a>
-      </div>
-      <div class="key-input-wrap">
-        <input class="key-input" id="key-openai" type="password"
-               placeholder="sk-proj-..." autocomplete="off" oninput="validateKey(this, 'sk-')" />
-        <button class="key-toggle" onclick="toggleVis('key-openai', this)">👁</button>
-      </div>
-      <div class="key-hint">Used for Whisper audio transcription · $0.006/min of audio</div>
-    </div>
-
-    <div class="key-field">
-      <div class="key-label">
-        Tavily API Key
-        <a href="https://app.tavily.com/" target="_blank">Get key →</a>
-      </div>
-      <div class="key-input-wrap">
-        <input class="key-input" id="key-tavily" type="password"
-               placeholder="tvly-..." autocomplete="off" oninput="validateKey(this, 'tvly')" />
-        <button class="key-toggle" onclick="toggleVis('key-tavily', this)">👁</button>
-      </div>
-      <div class="key-hint">Used for live web search · 1,000 free searches/month</div>
-    </div>
-
-    <div class="keys-divider"></div>
-    <button class="btn-save-keys" onclick="saveKeys()">Save Keys</button>
-    <div class="save-status" id="save-status"></div>
-  </div>
-</div>
-
-<!-- ── Header ── -->
 <header>
   <div class="logo-icon">🔍</div>
   <div class="logo-text">Fact<span>Check</span> AI</div>
   <div class="header-right">
     <div class="badge">POC v0.1</div>
-    <button class="btn-keys" id="keys-btn" onclick="openKeysModal()">
-      <span id="keys-btn-icon">🔑</span>
-      <span id="keys-btn-label">API Keys</span>
+    <button class="btn-keys" onclick="openKeys()">
+      <div class="keys-dot" id="keys-dot"></div>
+      API Keys
     </button>
   </div>
 </header>
 
-<!-- ── Hero ── -->
-<section class="hero">
-  <div class="hero-tag">🤖 Powered by Claude + GPT-4o Whisper + Tavily</div>
-  <h1>Fact-check any video<br /><span>in seconds</span></h1>
-  <p>Paste an Instagram, YouTube, or TikTok link. We transcribe the video, extract every factual claim, and verify each one against live web sources.</p>
-</section>
+<!-- Keys modal -->
+<div class="modal-overlay" id="keys-modal" onclick="modalOutsideClick(event)">
+  <div class="modal">
+    <h2>🔑 Your API Keys</h2>
+    <p>Keys are saved in your browser only (localStorage). They are sent directly with each request — never stored on our servers.</p>
 
-<!-- Keys required banner -->
-<div class="keys-banner" id="keys-banner">
-  <div class="keys-banner-inner" onclick="openKeysModal()">
-    <span>⚡</span>
-    <span>To get started, <strong>add your API keys</strong> — stored only in your browser, never on our servers.</span>
-    <span style="margin-left:auto; color: var(--accent); font-weight:600;">Add keys →</span>
+    <div class="key-field">
+      <label>Anthropic (Claude)</label>
+      <input type="password" id="key-anthropic" placeholder="sk-ant-..." autocomplete="off" />
+      <div class="modal-hint">Get it at <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a></div>
+    </div>
+    <div class="key-field">
+      <label>OpenAI (Whisper transcription)</label>
+      <input type="password" id="key-openai" placeholder="sk-proj-..." autocomplete="off" />
+      <div class="modal-hint">Get it at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a></div>
+    </div>
+    <div class="key-field">
+      <label>Tavily (Web search for sources)</label>
+      <input type="password" id="key-tavily" placeholder="tvly-..." autocomplete="off" />
+      <div class="modal-hint">1,000 free searches/month at <a href="https://app.tavily.com/" target="_blank">app.tavily.com</a></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveKeys()">Save Keys</button>
+      <button class="btn-cancel" onclick="closeKeys()">Cancel</button>
+    </div>
   </div>
 </div>
 
-<!-- ── Search ── -->
+<section class="hero">
+  <div class="hero-tag">🤖 Powered by Claude + Whisper + Tavily</div>
+  <h1>Fact-check any video<br /><span>in seconds</span></h1>
+  <p>Paste an Instagram, YouTube, or TikTok link. We transcribe it, extract every factual claim, and verify each one against live web sources.</p>
+</section>
+
+<div id="keys-warning">
+  <div class="warn-card">
+    ⚠️ API keys not set — analysis won't work without them.
+    <button onclick="openKeys()">Add Keys →</button>
+  </div>
+</div>
+
 <div class="search-wrap">
   <div class="search-box">
-    <input type="url" id="url-input"
-           placeholder="Paste an Instagram, YouTube, or TikTok link…"
-           autocomplete="off" />
+    <input type="url" id="url-input" placeholder="Paste an Instagram, YouTube, or TikTok link…" autocomplete="off" />
     <button class="btn-analyze" id="analyze-btn" onclick="analyze()">Analyze →</button>
   </div>
   <p class="supported">Supports: Instagram Reels · YouTube Shorts · TikTok · Twitter/X</p>
 </div>
 
-<!-- ── Loading ── -->
 <div id="loading">
   <div class="loading-card">
     <div class="spinner"></div>
-    <p style="font-size:16px;font-weight:600;">Processing video…</p>
+    <p style="font-size:15px;font-weight:600;">Processing video…</p>
     <ul class="loading-steps">
-      <li><span class="step-dot" id="step1"></span> Downloading / fetching transcript</li>
-      <li><span class="step-dot" id="step2"></span> Transcribing audio</li>
-      <li><span class="step-dot" id="step3"></span> Extracting factual claims</li>
-      <li><span class="step-dot" id="step4"></span> Verifying claims against live sources</li>
+      <li><span class="step-dot" id="step1"></span> Downloading &amp; transcribing video</li>
+      <li><span class="step-dot" id="step2"></span> Extracting factual claims</li>
+      <li><span class="step-dot" id="step3"></span> Searching live sources per claim</li>
+      <li><span class="step-dot" id="step4"></span> Computing verdicts &amp; overall rating</li>
     </ul>
   </div>
 </div>
 
-<!-- ── Error ── -->
 <div id="error">
   <div class="error-card">
-    <div class="error-icon">⚠️</div>
+    <div style="font-size:20px">⚠️</div>
     <div class="error-msg">
       <strong>Something went wrong</strong><br />
       <span id="error-text"></span>
@@ -600,12 +252,21 @@
   </div>
 </div>
 
-<!-- ── Results ── -->
 <div id="results">
+  <div class="overall-banner unverified" id="overall-banner">
+    <div class="overall-icon" id="overall-icon"></div>
+    <div>
+      <div class="overall-label">Overall Verdict</div>
+      <div class="overall-title" id="overall-title"></div>
+      <div class="overall-summary" id="overall-summary"></div>
+    </div>
+  </div>
+
   <div class="results-header">
-    <div class="results-title" id="results-title">Analysis Complete</div>
+    <div class="results-title" id="results-title"></div>
     <div class="summary-pills" id="summary-pills"></div>
   </div>
+
   <div class="transcript-section">
     <div class="section-label">Transcript</div>
     <div class="transcript-box" id="transcript-box" onclick="toggleTranscript()">
@@ -614,322 +275,183 @@
     </div>
     <div class="transcript-hint" onclick="toggleTranscript()">▼ Show full transcript</div>
   </div>
-  <!-- Overall verdict -->
-  <div id="overall-card" style="display:none"></div>
 
-  <div class="section-label">Claims Analysis</div>
-  <div id="core-section" style="display:none">
-    <div class="sub-label">Key Claims</div>
-    <div class="claims-grid" id="core-grid"></div>
+  <div class="claims-section-label">
+    Claims Analysis
+    <span class="sort-tag">sorted: misleading first · verified last</span>
   </div>
-  <div id="general-section" style="display:none">
-    <div class="sub-label">General Facts</div>
-    <div class="claims-grid" id="general-grid"></div>
-  </div>
-  <!-- fallback when no categorisation -->
   <div class="claims-grid" id="claims-grid"></div>
 </div>
 
 <footer>
-  MIT Licensed · Open Source on
-  <a href="https://github.com/lalitnankani/factcheck-ai" target="_blank">GitHub</a>
-  · Built for the community
+  Open source · <a href="https://github.com/lalitnankani/factcheck-ai" target="_blank">GitHub</a> · Built for the community
 </footer>
 
 <script>
-  // ── Key storage ────────────────────────────────────────────────────────────
-  const KEY_STORE = 'factcheck_api_keys';
+  const KEYS = ['anthropic','openai','tavily'];
 
-  function loadKeys() {
-    try { return JSON.parse(localStorage.getItem(KEY_STORE) || '{}'); }
-    catch { return {}; }
-  }
-
+  function loadKeys() { KEYS.forEach(k => { document.getElementById('key-'+k).value = localStorage.getItem('fc_'+k) || ''; }); }
   function saveKeys() {
-    const keys = {
-      anthropic: document.getElementById('key-anthropic').value.trim(),
-      openai:    document.getElementById('key-openai').value.trim(),
-      tavily:    document.getElementById('key-tavily').value.trim(),
-    };
-    localStorage.setItem(KEY_STORE, JSON.stringify(keys));
-    const status = document.getElementById('save-status');
-    status.textContent = '✓ Keys saved to browser storage';
-    setTimeout(() => { status.textContent = ''; closeKeysModal(); }, 1200);
-    updateKeysBtnState();
-    updateKeysBanner();
+    KEYS.forEach(k => {
+      const v = document.getElementById('key-'+k).value.trim();
+      v ? localStorage.setItem('fc_'+k,v) : localStorage.removeItem('fc_'+k);
+    });
+    closeKeys(); updateKeysDot();
   }
-
-  function updateKeysBtnState() {
-    const keys = loadKeys();
-    const allSet = keys.anthropic && keys.openai && keys.tavily;
-    const btn = document.getElementById('keys-btn');
-    const lbl = document.getElementById('keys-btn-label');
-    if (allSet) {
-      btn.classList.add('keys-set');
-      lbl.textContent = 'Keys Set ✓';
-    } else {
-      btn.classList.remove('keys-set');
-      lbl.textContent = 'API Keys';
-    }
+  function getKey(k)   { return localStorage.getItem('fc_'+k) || ''; }
+  function allKeysSet(){ return KEYS.every(k => !!getKey(k)); }
+  function updateKeysDot() {
+    document.getElementById('keys-dot').className = 'keys-dot' + (allKeysSet() ? ' set' : '');
+    document.getElementById('keys-warning').style.display = allKeysSet() ? 'none' : 'block';
   }
+  function openKeys()  { loadKeys(); document.getElementById('keys-modal').classList.add('open'); }
+  function closeKeys() { document.getElementById('keys-modal').classList.remove('open'); }
+  function modalOutsideClick(e) { if (e.target.id==='keys-modal') closeKeys(); }
 
-  function updateKeysBanner() {
-    const keys = loadKeys();
-    const allSet = keys.anthropic && keys.openai && keys.tavily;
-    document.getElementById('keys-banner').classList.toggle('visible', !allSet);
-  }
-
-  // ── Modal ──────────────────────────────────────────────────────────────────
-  function openKeysModal() {
-    const keys = loadKeys();
-    document.getElementById('key-anthropic').value = keys.anthropic || '';
-    document.getElementById('key-openai').value    = keys.openai    || '';
-    document.getElementById('key-tavily').value    = keys.tavily    || '';
-    document.getElementById('keys-modal').classList.add('open');
-  }
-
-  function closeKeysModal() {
-    document.getElementById('keys-modal').classList.remove('open');
-    document.getElementById('save-status').textContent = '';
-  }
-
-  function handleOverlayClick(e) {
-    if (e.target === document.getElementById('keys-modal')) closeKeysModal();
-  }
-
-  function toggleVis(inputId, btn) {
-    const inp = document.getElementById(inputId);
-    if (inp.type === 'password') { inp.type = 'text';     btn.textContent = '🙈'; }
-    else                         { inp.type = 'password'; btn.textContent = '👁';  }
-  }
-
-  function validateKey(input, prefix) {
-    input.classList.toggle('valid', input.value.trim().startsWith(prefix) && input.value.trim().length > 10);
-  }
-
-  // ── Step animation ─────────────────────────────────────────────────────────
+  // Step animation
   let stepTimer = null;
-
   function setStep(n) {
-    for (let i = 1; i <= 4; i++) {
-      const dot = document.getElementById('step' + i);
-      if (!dot) continue;
-      if (i < n)      dot.className = 'step-dot done';
-      else if (i === n) dot.className = 'step-dot active';
-      else            dot.className = 'step-dot';
+    for (let i=1;i<=4;i++) {
+      const d = document.getElementById('step'+i);
+      d.className = 'step-dot'+(i<n?' done':i===n?' active':'');
     }
   }
-
-  function startStepAnimation() {
-    const durations = [4000, 10000, 6000, 15000];
-    let elapsed = 0;
-    setStep(1);
-    stepTimer = setInterval(() => {
-      elapsed += 500;
-      let acc = 0;
-      for (let i = 0; i < durations.length; i++) {
-        acc += durations[i];
-        if (elapsed < acc) { setStep(i + 1); break; }
-      }
-    }, 500);
+  function startSteps() {
+    const dur=[5000,8000,20000,10000]; let elapsed=0; setStep(1);
+    stepTimer = setInterval(()=>{
+      elapsed+=500; let acc=0;
+      for(let i=0;i<dur.length;i++){ acc+=dur[i]; if(elapsed<acc){setStep(i+1);break;} }
+    },500);
   }
+  function stopSteps() { clearInterval(stepTimer); setStep(5); }
 
-  function stopStepAnimation() {
-    if (stepTimer) { clearInterval(stepTimer); stepTimer = null; }
-    setStep(5);
-  }
+  // Sort order: misleading first, verified last
+  const SORT = { misleading:0, incorrect:1, unverified:2, verified:3 };
 
-  // ── Analyze ────────────────────────────────────────────────────────────────
   async function analyze() {
     const url = document.getElementById('url-input').value.trim();
     if (!url) { document.getElementById('url-input').focus(); return; }
-
-    const keys = loadKeys();
-    if (!keys.anthropic || !keys.openai || !keys.tavily) {
-      openKeysModal();
-      return;
-    }
+    if (!allKeysSet()) { openKeys(); return; }
 
     document.getElementById('results').style.display = 'none';
     document.getElementById('error').style.display   = 'none';
     document.getElementById('loading').style.display = 'block';
     document.getElementById('analyze-btn').disabled  = true;
-    startStepAnimation();
+    startSteps();
 
     try {
       const res = await fetch('/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
           url,
-          anthropic_api_key: keys.anthropic,
-          openai_api_key:    keys.openai,
-          tavily_api_key:    keys.tavily,
+          anthropic_api_key: getKey('anthropic'),
+          openai_api_key:    getKey('openai'),
+          tavily_api_key:    getKey('tavily'),
         })
       });
-
-      stopStepAnimation();
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('analyze-btn').disabled  = false;
-
-      if (!res.ok) {
-        const data = await res.json();
-        showError(data.detail || 'Unknown error');
-        return;
-      }
-
+      stopSteps();
+      document.getElementById('loading').style.display='none';
+      document.getElementById('analyze-btn').disabled=false;
+      if (!res.ok) { const d=await res.json(); showError(d.detail||'Unknown error'); return; }
       renderResults(await res.json());
-
-    } catch (e) {
-      stopStepAnimation();
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('analyze-btn').disabled  = false;
+    } catch(e) {
+      stopSteps();
+      document.getElementById('loading').style.display='none';
+      document.getElementById('analyze-btn').disabled=false;
       showError('Network error — is the server running?');
     }
   }
 
   function showError(msg) {
     document.getElementById('error-text').textContent = msg;
-    document.getElementById('error').style.display    = 'block';
-    // If it's a key error, prompt them to open the modal
-    if (msg.toLowerCase().includes('key') || msg.toLowerCase().includes('api')) {
-      setTimeout(openKeysModal, 400);
-    }
+    document.getElementById('error').style.display = 'block';
   }
 
-  // ── Render results ─────────────────────────────────────────────────────────
   function renderResults(data) {
-    const { transcript, claims, overall_verdict, overall_summary } = data;
-    document.getElementById('transcript-text').textContent = transcript || '';
+    const { transcript='', claims=[], overall_verdict='unverified', overall_summary='' } = data;
 
-    // Overall verdict card
-    const overallEl = document.getElementById('overall-card');
-    if (overall_verdict) {
-      const icons = { true: '✅', false: '❌', misleading: '⚠️', unverified: '🔍' };
-      const labels = {
-        true:       'Overall: True',
-        false:      'Overall: False',
-        misleading: 'Overall: Misleading',
-        unverified: 'Overall: Unverified',
-      };
-      overallEl.className = `overall-card ${overall_verdict}`;
-      overallEl.innerHTML = `
-        <div class="overall-icon">${icons[overall_verdict] || '🔍'}</div>
-        <div class="overall-body">
-          <div class="overall-label">Video Verdict</div>
-          <div class="overall-verdict-text">${labels[overall_verdict] || overall_verdict}</div>
-          <div class="overall-summary">${esc(overall_summary)}</div>
-        </div>`;
-      overallEl.style.display = 'flex';
-    } else {
-      overallEl.style.display = 'none';
-    }
+    // Transcript
+    document.getElementById('transcript-text').textContent = transcript;
 
-    // Summary pills
-    const counts = { verified: 0, incorrect: 0, misleading: 0, unverified: 0 };
-    (claims || []).forEach(c => { if (c.verdict in counts) counts[c.verdict]++; });
+    // Overall banner
+    const ov = overall_verdict || 'unverified';
+    const bannerEl = document.getElementById('overall-banner');
+    bannerEl.className = 'overall-banner ' + ov;
+    const icons  = {true:'✅',false:'❌',misleading:'⚠️',unverified:'🔍'};
+    const titles = {true:'This video appears accurate',false:'This video contains false claims',misleading:'This video is misleading',unverified:'Could not fully verify this video'};
+    document.getElementById('overall-icon').textContent    = icons[ov]  || '🔍';
+    document.getElementById('overall-title').textContent   = titles[ov] || 'Verdict: '+ov;
+    document.getElementById('overall-summary').textContent = overall_summary;
+
+    // Pills
+    const counts = {verified:0,incorrect:0,misleading:0,unverified:0};
+    claims.forEach(c => { if(counts[c.verdict]!==undefined) counts[c.verdict]++; });
     const pillsEl = document.getElementById('summary-pills');
     pillsEl.innerHTML = '';
-    const icons = { verified: '✓', incorrect: '✗', misleading: '⚠', unverified: '?' };
-    Object.entries(counts).forEach(([v, n]) => {
-      if (n > 0) pillsEl.innerHTML += `<span class="pill ${v}">${icons[v]} ${n} ${v}</span>`;
-    });
+    const pi = {verified:'✓',incorrect:'✗',misleading:'⚠',unverified:'?'};
+    Object.entries(counts).forEach(([v,n]) => { if(n>0) pillsEl.innerHTML+=`<span class="pill ${v}">${pi[v]} ${n} ${v}</span>`; });
+    document.getElementById('results-title').textContent = `${claims.length} claim${claims.length!==1?'s':''} analyzed`;
 
-    document.getElementById('results-title').textContent =
-      `${claims.length} claim${claims.length !== 1 ? 's' : ''} analyzed`;
+    // Sort claims: misleading → incorrect → unverified → verified
+    const sorted = [...claims].sort((a,b)=>(SORT[a.verdict]??3)-(SORT[b.verdict]??3));
 
-    // Separate core vs general claims
-    const coreClaims    = (claims || []).filter(c => c.claim_type !== 'general');
-    const generalClaims = (claims || []).filter(c => c.claim_type === 'general');
-
-    const legacyGrid = document.getElementById('claims-grid');
-    const coreGrid   = document.getElementById('core-grid');
-    const genGrid    = document.getElementById('general-grid');
-    legacyGrid.innerHTML = '';
-    coreGrid.innerHTML   = '';
-    genGrid.innerHTML    = '';
-
-    if (!claims.length) {
-      legacyGrid.innerHTML = '<p style="color:var(--muted);font-size:15px">No verifiable factual claims were found in this video.</p>';
-      document.getElementById('core-section').style.display    = 'none';
-      document.getElementById('general-section').style.display = 'none';
-    } else if (generalClaims.length > 0) {
-      // Use split layout
-      coreClaims.forEach(c => coreGrid.appendChild(buildCard(c)));
-      generalClaims.forEach(c => genGrid.appendChild(buildCard(c)));
-      document.getElementById('core-section').style.display    = coreClaims.length    ? 'block' : 'none';
-      document.getElementById('general-section').style.display = generalClaims.length ? 'block' : 'none';
+    const grid = document.getElementById('claims-grid');
+    grid.innerHTML = '';
+    if (!sorted.length) {
+      grid.innerHTML = '<p style="color:var(--muted);font-size:14px">No verifiable factual claims found.</p>';
     } else {
-      // All core — use flat list
-      claims.forEach(c => legacyGrid.appendChild(buildCard(c)));
-      document.getElementById('core-section').style.display    = 'none';
-      document.getElementById('general-section').style.display = 'none';
+      sorted.forEach(c => grid.appendChild(buildCard(c)));
     }
 
     document.getElementById('results').style.display = 'block';
-    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
   }
 
   function buildCard(c) {
     const card = document.createElement('div');
     card.className = `claim-card ${c.verdict}`;
-    const confClass = { high: 'conf-high', medium: 'conf-medium', low: 'conf-low' }[c.confidence] || 'conf-low';
-    const confPct   = { high: '90%', medium: '55%', low: '25%' }[c.confidence] || '25%';
+    const confClass = {high:'conf-high',medium:'conf-medium',low:'conf-low'}[c.confidence]||'conf-low';
+    const confPct   = {high:'90%',medium:'55%',low:'25%'}[c.confidence]||'25%';
+    const vi = {verified:'✓',incorrect:'✗',misleading:'⚠',unverified:'?'};
+    const isCore = (c.claim_type||'core')==='core';
 
-    const sourcesHtml = (c.sources || []).slice(0, 3).map(s => `
+    const srcHtml = (c.sources||[]).slice(0,3).map(s=>`
       <div class="source-item">
         <div class="source-dot"></div>
         <div>
-          <a class="source-link" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title || s.url)}</a>
-          ${s.relevance ? `<div class="source-relevance">${esc(s.relevance)}</div>` : ''}
+          <a class="source-link" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title||s.url)}</a>
+          ${s.relevance?`<div class="source-relevance">${esc(s.relevance)}</div>`:''}
         </div>
       </div>`).join('');
 
     card.innerHTML = `
       <div class="claim-header">
-        <span class="verdict-badge ${c.verdict}">${verdictIcon(c.verdict)} ${c.verdict}</span>
+        <span class="verdict-badge ${c.verdict}">${vi[c.verdict]||'?'} ${c.verdict}</span>
         <div class="claim-text">${esc(c.claim)}</div>
+        ${isCore?'<span class="core-tag">core claim</span>':''}
       </div>
       <div class="claim-body">
         <p class="claim-explanation">${esc(c.explanation)}</p>
         <div class="confidence-row ${confClass}">
           <span class="confidence-label">Confidence</span>
           <div class="confidence-bar"><div class="confidence-fill" style="width:${confPct}"></div></div>
-          <span class="confidence-val">${c.confidence || 'low'}</span>
+          <span class="confidence-val">${c.confidence||'low'}</span>
         </div>
-        ${sourcesHtml ? `<div class="sources-title">Sources</div><div class="sources-list">${sourcesHtml}</div>` : ''}
+        ${srcHtml?`<div class="sources-title">Sources</div><div class="sources-list">${srcHtml}</div>`:''}
       </div>`;
     return card;
   }
 
-  function verdictIcon(v) {
-    return { verified: '✓', incorrect: '✗', misleading: '⚠', unverified: '?' }[v] || '?';
-  }
-
-  function esc(str) {
-    return String(str || '')
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   function toggleTranscript() {
-    const box  = document.getElementById('transcript-box');
-    const hint = document.querySelector('.transcript-hint');
+    const box=document.getElementById('transcript-box'), hint=document.querySelector('.transcript-hint');
     box.classList.toggle('expanded');
     hint.textContent = box.classList.contains('expanded') ? '▲ Show less' : '▼ Show full transcript';
   }
 
-  // ── Init ───────────────────────────────────────────────────────────────────
-  document.getElementById('url-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') analyze();
-  });
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeKeysModal();
-  });
-
-  updateKeysBtnState();
-  updateKeysBanner();
+  document.getElementById('url-input').addEventListener('keydown', e => { if(e.key==='Enter') analyze(); });
+  updateKeysDot();
 </script>
 </body>
 </html>
