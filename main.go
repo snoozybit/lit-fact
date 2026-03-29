@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"html"
 	"io"
 	"log"
 	"mime/multipart"
@@ -15,6 +17,7 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -210,66 +213,136 @@ func extractYouTubeID(rawURL string) string {
 	return ""
 }
 
+var httpClient = &http.Client{Timeout: 20 * time.Second}
+
+// innertubeAPIKey is extracted once per video from the watch page.
+var innertubeKeyRe = regexp.MustCompile(`"INNERTUBE_API_KEY":\s*"([A-Za-z0-9_-]+)"`)
+
 func getYouTubeCaptions(videoID string) (string, error) {
-	tmpDir, err := os.MkdirTemp("", "subs-*")
+	// Step 1: fetch watch page to extract the InnerTube API key.
+	pageReq, _ := http.NewRequest("GET", "https://www.youtube.com/watch?v="+videoID, nil)
+	pageReq.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
+	pageReq.Header.Set("Accept-Language", "en-US,en;q=0.9")
+	pageResp, err := httpClient.Do(pageReq)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("fetch page: %w", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	pageBody, _ := io.ReadAll(pageResp.Body)
+	pageResp.Body.Close()
 
-	cmd := exec.Command(ytDLP(),
-		"--write-auto-sub",
-		"--sub-lang", "en",
-		"--sub-format", "vtt",
-		"--skip-download",
-		"-o", filepath.Join(tmpDir, "%(id)s"),
-		"--quiet",
-		"https://www.youtube.com/watch?v="+videoID,
-	)
-	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("yt-dlp subs: %w", err)
+	apiKey := "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8" // fallback
+	if m := innertubeKeyRe.FindSubmatch(pageBody); len(m) > 1 {
+		apiKey = string(m[1])
 	}
 
-	var vttPath string
-	_ = filepath.Walk(tmpDir, func(p string, _ os.FileInfo, _ error) error {
-		if strings.HasSuffix(p, ".vtt") {
-			vttPath = p
-		}
-		return nil
+	// Step 2: POST to InnerTube player API using the ANDROID client.
+	// The ANDROID client returns captionTrack URLs without the &exp=xpe PoToken
+	// requirement, so they can be fetched directly.
+	playerPayload, _ := json.Marshal(map[string]any{
+		"context": map[string]any{
+			"client": map[string]any{
+				"clientName":    "ANDROID",
+				"clientVersion": "20.10.38",
+			},
+		},
+		"videoId": videoID,
 	})
-	if vttPath == "" {
-		return "", fmt.Errorf("no vtt file found")
+	playerReq, _ := http.NewRequest("POST",
+		"https://www.youtube.com/youtubei/v1/player?key="+apiKey,
+		bytes.NewReader(playerPayload))
+	playerReq.Header.Set("Content-Type", "application/json")
+	playerReq.Header.Set("User-Agent", "Mozilla/5.0")
+	playerResp, err := httpClient.Do(playerReq)
+	if err != nil {
+		return "", fmt.Errorf("innertube player: %w", err)
+	}
+	defer playerResp.Body.Close()
+
+	var playerData struct {
+		Captions struct {
+			PlayerCaptionsTracklistRenderer struct {
+				CaptionTracks []struct {
+					BaseURL      string `json:"baseUrl"`
+					LanguageCode string `json:"languageCode"`
+					Kind         string `json:"kind"`
+				} `json:"captionTracks"`
+			} `json:"playerCaptionsTracklistRenderer"`
+		} `json:"captions"`
+	}
+	if err := json.NewDecoder(playerResp.Body).Decode(&playerData); err != nil {
+		return "", fmt.Errorf("parse player response: %w", err)
+	}
+	tracks := playerData.Captions.PlayerCaptionsTracklistRenderer.CaptionTracks
+	if len(tracks) == 0 {
+		return "", fmt.Errorf("no captions found for this video")
 	}
 
-	raw, err := os.ReadFile(vttPath)
-	if err != nil {
-		return "", err
+	// Step 3: pick best English track (manual > auto-generated > first available).
+	trackURL := ""
+	for _, t := range tracks {
+		if t.LanguageCode == "en" && t.Kind != "asr" {
+			trackURL = t.BaseURL
+			break
+		}
 	}
-	return parseVTT(string(raw)), nil
+	if trackURL == "" {
+		for _, t := range tracks {
+			if strings.HasPrefix(t.LanguageCode, "en") {
+				trackURL = t.BaseURL
+				break
+			}
+		}
+	}
+	if trackURL == "" {
+		trackURL = tracks[0].BaseURL
+	}
+
+	// Step 4: fetch the caption XML.
+	captionResp, err := httpClient.Get(trackURL)
+	if err != nil {
+		return "", fmt.Errorf("fetch timedtext: %w", err)
+	}
+	defer captionResp.Body.Close()
+	captionXML, _ := io.ReadAll(captionResp.Body)
+	if len(captionXML) == 0 {
+		return "", fmt.Errorf("empty caption response")
+	}
+	return parseTimedTextXML(captionXML), nil
 }
 
-var (
-	tsRe  = regexp.MustCompile(`^\d{2}:\d{2}`)
-	tagRe = regexp.MustCompile(`<[^>]+>`)
-)
+// timedTextBody handles both <transcript><text> (format 1) and
+// <timedtext><body><p> (format 3) caption XML variants.
+type timedTextBody struct {
+	// format 3: <timedtext><body><p>
+	Body struct {
+		Items []struct {
+			Text string `xml:",chardata"`
+		} `xml:"p"`
+	} `xml:"body"`
+	// format 1: <transcript><text>
+	Items []struct {
+		Text string `xml:",chardata"`
+	} `xml:"text"`
+}
 
-func parseVTT(vtt string) string {
-	seen := map[string]bool{}
-	var parts []string
-	for _, line := range strings.Split(vtt, "\n") {
-		line = strings.TrimSpace(line)
-		if line == "" || strings.HasPrefix(line, "WEBVTT") ||
-			strings.HasPrefix(line, "NOTE") || tsRe.MatchString(line) ||
-			strings.HasPrefix(line, "Kind:") || strings.HasPrefix(line, "Language:") {
-			continue
-		}
-		clean := strings.TrimSpace(tagRe.ReplaceAllString(line, ""))
-		if clean != "" && !seen[clean] {
-			seen[clean] = true
-			parts = append(parts, clean)
+func parseTimedTextXML(data []byte) string {
+	var doc timedTextBody
+	_ = xml.Unmarshal(data, &doc)
+
+	var texts []string
+	// format 3 items are in Body.Items
+	for _, item := range doc.Body.Items {
+		if text := html.UnescapeString(strings.TrimSpace(item.Text)); text != "" {
+			texts = append(texts, text)
 		}
 	}
-	return strings.Join(parts, " ")
+	// format 1 items are directly in doc.Items
+	for _, item := range doc.Items {
+		if text := html.UnescapeString(strings.TrimSpace(item.Text)); text != "" {
+			texts = append(texts, text)
+		}
+	}
+	return strings.Join(texts, " ")
 }
 
 func downloadAudio(rawURL string) (string, error) {
