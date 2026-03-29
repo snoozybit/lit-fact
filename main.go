@@ -217,7 +217,7 @@ func getYouTubeCaptions(videoID string) (string, error) {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	cmd := exec.Command("yt-dlp",
+	cmd := exec.Command(ytDLP(),
 		"--write-auto-sub",
 		"--sub-lang", "en",
 		"--sub-format", "vtt",
@@ -278,7 +278,7 @@ func downloadAudio(rawURL string) (string, error) {
 		return "", err
 	}
 
-	cmd := exec.Command("yt-dlp",
+	cmd := exec.Command(ytDLP(),
 		"-f", "bestaudio/best[ext=mp4]/best",
 		"--extract-audio",
 		"--audio-format", "mp3",
@@ -599,6 +599,20 @@ func analyzeHandler(c *gin.Context) {
 }
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
+
+// ytDLP resolves the yt-dlp binary — checks common install locations.
+func ytDLP() string {
+	for _, p := range []string{
+		"/opt/homebrew/bin/yt-dlp", // macOS Homebrew (Apple Silicon)
+		"/usr/local/bin/yt-dlp",    // macOS Homebrew (Intel) / Linux
+		"/usr/bin/yt-dlp",          // Linux apt/snap
+	} {
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	return "yt-dlp" // fall back to PATH
+}
 
 func firstNonEmpty(vals ...string) string {
 	for _, v := range vals {
