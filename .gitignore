@@ -1,6 +1,18 @@
+# Go
+factcheck
+factcheck-ai
+*.exe
+
+# Python (kept for yt-dlp local dev)
 venv/
 __pycache__/
 *.pyc
+
+# Env & secrets
 .env
-*.log
+
+# macOS
 .DS_Store
+
+# Logs
+*.log

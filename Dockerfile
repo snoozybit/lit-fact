@@ -1,15 +1,21 @@
-FROM python:3.11-slim
+# ── Stage 1: Build the Go binary ─────────────────────────────────────────────
+FROM golang:1.22-alpine AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o factcheck .
 
-# Install ffmpeg (needed by yt-dlp for audio extraction)
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
+# ── Stage 2: Lean runtime with ffmpeg + yt-dlp ───────────────────────────────
+FROM python:3.11-slim
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ffmpeg && \
+    pip install --no-cache-dir yt-dlp && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
+COPY --from=builder /app/factcheck .
+COPY static/ ./static/
 
 EXPOSE 8000
-
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["./factcheck"]
